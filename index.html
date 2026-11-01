@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asesmen Sumatif IPA Kelas VII - MTsN 1 Kota Malang</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+        @media print {
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            body { background: white; color: black; }
+        }
+        .print-only { display: none; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between text-gray-800">
+
+    <!-- Header Aplikasi -->
+    <header class="bg-teal-700 text-white shadow-md no-print">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <i class="fa-solid fa-atom text-2xl text-teal-200"></i>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight">ASESMEN SUMATIF IPA KELAS VII</h1>
+                    <p class="text-xs text-teal-100">MTsN 1 Kota Malang • Penyusun: Siti Fatimah, S.Pd.</p>
+                </div>
+            </div>
+            <div id="userInfoHeader" class="text-right hidden">
+                <span id="headerName" class="font-semibold block text-sm"></span>
+                <span id="headerRole" class="text-xs bg-teal-800 px-2 py-0.5 rounded-full"></span>
+                <button onclick="logout()" class="ml-2 text-xs bg-red-600 hover:bg-red-700 px-2 py-1 rounded text-white font-medium transition">
+                    <i class="fa-solid fa-right-from-bracket"></i> Keluar
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="container mx-auto px-4 py-6 flex-grow max-w-5xl">
+
+        <!-- LOGIN CONTAINER -->
+        <div id="loginSection" class="max-w-md mx-auto bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden my-6">
+            <div class="bg-teal-600 p-6 text-white text-center">
+                <i class="fa-solid fa-graduation-cap text-4xl mb-2"></i>
+                <h2 class="text-xl font-bold">Portal Asesmen IPA</h2>
+                <p class="text-sm text-teal-100">Materi: Suhu, Kalor, dan Penerapan Pemuaian</p>
+            </div>
+            
+            <!-- Tab Switcher -->
+            <div class="flex border-b">
+                <button id="tabSiswa" onclick="switchLoginTab('siswa')" class="w-1/2 py-3 font-semibold text-sm text-center border-b-2 border-teal-600 text-teal-600 focus:outline-none">
+                    <i class="fa-solid fa-user-graduate mr-1"></i> Mode Siswa
+                </button>
+                <button id="tabAdmin" onclick="switchLoginTab('admin')" class="w-1/2 py-3 font-semibold text-sm text-center text-gray-500 hover:text-teal-600 focus:outline-none">
+                    <i class="fa-solid fa-user-gear mr-1"></i> Mode Admin / Guru
+                </button>
+            </div>
+
+            <div class="p-6">
+                <!-- Form Login Siswa -->
+                <form id="formSiswa" onsubmit="handleLoginSiswa(event)">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-semibold mb-2">Nama Lengkap Siswa</label>
+                        <input type="text" id="siswaNama" required placeholder="Masukkan nama lengkap" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:outline-none">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-semibold mb-2">Kelas</label>
+                        <select id="siswaKelas" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:outline-none">
+                            <option value="">-- Pilih Kelas --</option>
+                            <option value="VII A">VII A</option>
+                            <option value="VII B">VII B</option>
+                            <option value="VII C">VII C</option>
+                            <option value="VII D">VII D</option>
+                            <option value="VII E">VII E</option>
+                            <option value="VII F">VII F</option>
+                            <option value="VII G">VII G</option>
+                        </select>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-gray-700 text-sm font-semibold mb-2">Nomor Presensi (Password)</label>
+                        <input type="number" id="siswaPresensi" required placeholder="Masukkan nomor presensi (contoh: 15)" min="1" max="60" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:outline-none">
+                    </div>
+                    <button type="submit" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-2.5 rounded-lg transition shadow-md">
+                        Mulai Ujian Asesmen <i class="fa-solid fa-arrow-right ml-1"></i>
+                    </button>
+                </form>
+
+                <!-- Form Login Admin -->
+                <form id="formAdmin" onsubmit="handleLoginAdmin(event)" class="hidden">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-semibold mb-2">Username Admin</label>
+                        <input type="text" id="adminUser" required placeholder="Masukkan username" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:outline-none">
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-gray-700 text-sm font-semibold mb-2">Password Admin</label>
+                        <input type="password" id="adminPass" required placeholder="Masukkan password" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:outline-none">
+                        <p class="text-xs text-gray-500 mt-1">Default login: Username <b>admin</b> | Password <b>admin123</b></p>
+                    </div>
+                    <button type="submit" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-2.5 rounded-lg transition shadow-md mb-2">
+                        Masuk Panel Admin <i class="fa-solid fa-lock ml-1"></i>
+                    </button>
+                    <button type="button" onclick="simulasiUjianSiswa()" class="w-full bg-indigo-50 border border-indigo-200 text-indigo-700 hover:bg-indigo-100 font-semibold py-2 rounded-lg text-sm transition">
+                        <i class="fa-solid fa-flask"></i> Uji Coba Langsung (Tanpa Login)
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- DASHBOARD ADMIN SECTION -->
+        <div id="adminSection" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-xl shadow-md flex flex-wrap justify-between items-center gap-4 border">
+                <div>
+                    <h2 class="text-xl font-bold text-gray-800"><i class="fa-solid fa-user-shield text-teal-600"></i> Panel Kontrol Guru / Admin</h2>
+                    <p class="text-sm text-gray-600">Penyusun: Siti Fatimah, S.Pd. • MTsN 1 Kota Malang</p>
+                </div>
+                <div class="space-x-2">
+                    <button onclick="simulasiUjianSiswa()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition shadow">
+                        <i class="fa-solid fa-flask"></i> Uji Coba Soal (Simulasi Siswa)
+                    </button>
+                    <button onclick="openChangePassModal()" class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition shadow">
+                        <i class="fa-solid fa-key"></i> Ubah Password Admin
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tabel Kelola Soal -->
+            <div class="bg-white p-6 rounded-xl shadow-md border">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-bold text-gray-800"><i class="fa-solid fa-list-check text-teal-600"></i> Bank Soal Asesmen (<span id="totalSoalCount">0</span> Soal)</h3>
+                    <button onclick="resetDataUjianSiswa()" class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-3 py-1.5 rounded-lg text-xs font-semibold">
+                        <i class="fa-solid fa-rotate-left"></i> Reset Akses Ujian Siswa
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-sm">
+                        <thead>
+                            <tr class="bg-gray-100 text-gray-700">
+                                <th class="p-3 border">No</th>
+                                <th class="p-3 border">Teks Pertanyaan</th>
+                                <th class="p-3 border">Tipe Soal</th>
+                                <th class="p-3 border">Kunci Jawaban</th>
+                                <th class="p-3 border text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminSoalTable">
+                            <!-- Tabel diisi lewat JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL UBAH PASSWORD ADMIN -->
+        <div id="changePassModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+            <div class="bg-white p-6 rounded-xl shadow-xl w-full max-w-md">
+                <h3 class="text-lg font-bold mb-4">Ubah Password Admin</h3>
+                <form onsubmit="saveAdminPassword(event)">
+                    <div class="mb-4">
+                        <label class="block text-sm font-semibold mb-1">Password Baru</label>
+                        <input type="password" id="newAdminPass" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500">
+                    </div>
+                    <div class="flex justify-end space-x-2">
+                        <button type="button" onclick="closeChangePassModal()" class="px-4 py-2 border rounded-lg text-gray-600 text-sm">Batal</button>
+                        <button type="submit" class="px-4 py-2 bg-teal-600 text-white rounded-lg text-sm font-semibold">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- MODAL EDIT SOAL -->
+        <div id="editSoalModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 overflow-y-auto py-10">
+            <div class="bg-white p-6 rounded-xl shadow-xl w-full max-w-2xl max-h-screen overflow-y-auto">
+                <h3 class="text-lg font-bold mb-4">Edit Soal No. <span id="editSoalNo"></span></h3>
+                <form onsubmit="saveEditedSoal(event)">
+                    <input type="hidden" id="editSoalIndex">
+                    <div class="mb-4">
+                        <label class="block text-sm font-semibold mb-1">Teks Soal</label>
+                        <textarea id="editSoalTeks" rows="3" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"></textarea>
+                    </div>
+                    <div id="editOptionsContainer" class="mb-4 space-y-2">
+                        <!-- Komponen Opsi Jawaban -->
+                    </div>
+                    <div class="flex justify-end space-x-2">
+                        <button type="button" onclick="closeEditSoalModal()" class="px-4 py-2 border rounded-lg text-gray-600 text-sm">Batal</button>
+                        <button type="submit" class="px-4 py-2 bg-teal-600 text-white rounded-lg text-sm font-semibold">Simpan Perubahan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- UJIAN SECTION -->
+        <div id="quizSection" class="hidden">
+            <div class="bg-white p-4 rounded-xl shadow-md border mb-6 flex flex-wrap justify-between items-center gap-4">
+                <div>
+                    <h2 class="font-bold text-gray-800 text-lg">LEMBAR ASESMEN IPA KELAS VII</h2>
+                    <p class="text-xs text-gray-500">Materi: Suhu, Kalor, dan Penerapan Pemuaian</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="text-right">
+                        <span class="text-xs text-gray-500 block">Identitas Siswa:</span>
+                        <span id="quizStudentInfo" class="font-bold text-teal-700 text-sm"></span>
+                    </div>
+                </div>
+            </div>
+
+            <form id="quizForm" onsubmit="submitQuiz(event)">
+                <div id="soalContainer" class="space-y-6">
+                    <!-- 40 Soal Diisi secara Dinamis -->
+                </div>
+
+                <div class="mt-8 bg-white p-6 rounded-xl shadow-md border text-center">
+                    <p class="text-sm text-gray-600 mb-4">Pastikan seluruh soal telah dijawab sebelum mengirimkan lembar ujian.</p>
+                    <button type="submit" class="bg-teal-600 hover:bg-teal-700 text-white font-bold px-8 py-3 rounded-lg shadow-lg transition text-base">
+                        <i class="fa-solid fa-paper-plane mr-2"></i> Kirim Jawaban & Selesaikan Ujian
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- HASIL & SKOR SECTION -->
+        <div id="resultSection" class="hidden max-w-3xl mx-auto">
+            <div class="bg-white rounded-2xl shadow-xl border overflow-hidden p-8 text-center print:shadow-none print:border-none">
+                
+                <!-- Kop Surat untuk Cetak PDF -->
+                <div class="print-only mb-6 border-b-2 border-gray-800 pb-4 text-center">
+                    <h2 class="text-xl font-bold uppercase">KEMENTERIAN AGAMA REPUBLIK INDONESIA</h2>
+                    <h3 class="text-lg font-bold">MADRASAH TSANAWIYAH NEGERI 1 KOTA MALANG</h3>
+                    <p class="text-xs">Jl. Bandung No. 7, Penanggungan, Klojen, Kota Malang, Jawa Timur</p>
+                    <hr class="my-2 border-gray-800">
+                    <h4 class="text-md font-bold underline mt-2">LEMBAR HASIL ASESMEN SUMATIF IPA KELAS VII</h4>
+                    <p class="text-xs">Materi: Suhu, Kalor, dan Penerapan Pemuaian</p>
+                </div>
+
+                <div class="no-print">
+                    <div class="inline-flex items-center justify-center w-20 h-20 bg-teal-100 rounded-full text-teal-600 text-3xl mb-4">
+                        <i class="fa-solid fa-trophy"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-800">Asesmen Selesai!</h2>
+                    <p class="text-gray-500 text-sm mb-6">Hasil nilai telah tersimpan di dalam sistem asesmen.</p>
+                </div>
+
+                <!-- Kartu Ringkasan Hasil -->
+                <div class="bg-gray-50 p-6 rounded-xl border max-w-md mx-auto text-left mb-6">
+                    <div class="flex justify-between border-b pb-2 mb-2 text-sm">
+                        <span class="text-gray-600">Nama Siswa:</span>
+                        <span id="resNama" class="font-semibold text-gray-800"></span>
+                    </div>
+                    <div class="flex justify-between border-b pb-2 mb-2 text-sm">
+                        <span class="text-gray-600">Kelas:</span>
+                        <span id="resKelas" class="font-semibold text-gray-800"></span>
+                    </div>
+                    <div class="flex justify-between border-b pb-2 mb-2 text-sm">
+                        <span class="text-gray-600">Nomor Presensi:</span>
+                        <span id="resPresensi" class="font-semibold text-gray-800"></span>
+                    </div>
+                    <div class="flex justify-between border-b pb-2 mb-2 text-sm">
+                        <span class="text-gray-600">Tanggal Ujian:</span>
+                        <span id="resTanggal" class="font-semibold text-gray-800"></span>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-dashed flex justify-between items-center">
+                        <span class="text-base font-bold text-gray-700">SKOR / NILAI AKHIR:</span>
+                        <span id="resSkor" class="text-4xl font-extrabold text-teal-600"></span>
+                    </div>
+                </div>
+
+                <!-- Pengesahan Cetak -->
+                <div class="print-only mt-12 flex justify-between text-left text-xs">
+                    <div>
+                        <p>Mengetahui,</p>
+                        <p>Orang Tua / Wali Siswa</p>
+                        <br><br><br>
+                        <p>( .................................... )</p>
+                    </div>
+                    <div>
+                        <p>Malang, <span id="printDate"></span></p>
+                        <p>Guru Pengampu IPA,</p>
+                        <br><br><br>
+                        <p class="font-bold underline">Siti Fatimah, S.Pd.</p>
+                        <p>NIP. MTsN 1 Kota Malang</p>
+                    </div>
+                </div>
+
+                <!-- Action Button -->
+                <div class="no-print space-x-3 mt-6">
+                    <button onclick="window.print()" class="bg-teal-600 hover:bg-teal-700 text-white font-bold px-6 py-2.5 rounded-lg shadow transition">
+                        <i class="fa-solid fa-download mr-1"></i> Cetak / Simpan PDF
+                    </button>
+                    <button id="btnKembaliAdmin" onclick="backToAdmin()" class="hidden bg-gray-700 hover:bg-gray-800 text-white font-bold px-6 py-2.5 rounded-lg shadow transition">
+                        <i class="fa-solid fa-arrow-left mr-1"></i> Kembali ke Panel Admin
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t py-4 text-center text-xs text-gray-500 no-print mt-auto">
+        <p>© MTsN 1 Kota Malang • Penyusun: Siti Fatimah, S.Pd. • Suhu, Kalor, dan Penerapan Pemuaian</p>
+    </footer>
+
+    <!-- SCRIPT JAVASCRIPT APLIKASI -->
+    <script>
+        // Database 40 Soal Asesmen
+        const initialBankSoal = [
+            // --- 30 SOAL PILIHAN GANDA ---
+            { id: 1, type: 'pg', question: 'Siswa MTsN 1 Kota Malang mengukur suhu sampel air di laboratorium dengan termometer Celcius yang menunjukkan angka 50°C. Jika diukur menggunakan skala Fahrenheit, nilai suhu yang terukur adalah...', options: ['90°F', '122°F', '130°F', '140°F'], answer: '122°F' },
+            { id: 2, type: 'pg', question: 'Sebuah sendok logam dan sendok kayu dimasukkan bersamaan ke dalam sup panas. Ujung sendok logam terasa panas sedangkan sendok kayu tidak. Penyebab utama fenomena ini adalah...', options: ['Logam memiliki daya hantar kalor (konduktivitas) yang jauh lebih tinggi daripada kayu', 'Sendok kayu menyerap kalor lebih banyak', 'Sendok logam tidak membutuhkan energi kalor', 'Sendok kayu memancarkan radiasi panas'], answer: 'Logam memiliki daya hantar kalor (konduktivitas) yang jauh lebih tinggi daripada kayu' },
+            { id: 3, type: 'pg', question: 'Di kota Malang pada malam hari suhu udara tercatat sebesar 18°C. Berapakah nilai suhu tersebut jika dinyatakan dalam skala Standar Internasional (Kelvin)?', options: ['255 K', '273 K', '291 K', '300 K'], answer: '291 K' },
+            { id: 4, type: 'pg', question: 'Petugas PT KAI sengaja memberi celah sempit di antara sambungan rel besi kereta api. Tujuan utama dari pemberian celah tersebut adalah...', options: ['Memberikan ruang muai besi saat terik matahari agar rel tidak membengkok', 'Mengurangi gaya gesek antara roda dengan rel', 'Menghemat penggunaan bahan besi', 'Mencegah rel berkarat'], answer: 'Memberikan ruang muai besi saat terik matahari agar rel tidak membengkok' },
+            { id: 5, type: 'pg', question: 'Pemasangan kaca jendela pada bingkai kayu selalu dirancang sedikit longgar oleh tukang kayu. Alasan teknisnya adalah...', options: ['Mencegah kaca pecah saat memuai karena terpapar suhu tinggi di siang hari', 'Memudahkan kaca dilepas saat dibersihkan', 'Mencegah masuknya angin dingin', 'Menghindari timbulnya embun'], answer: 'Mencegah kaca pecah saat memuai karena terpapar suhu tinggi di siang hari' },
+            { id: 6, type: 'pg', question: 'Sebongkah daging sapi 2 kg yang bersuhu 27°C dibekukan di dalam freezer hingga suhunya turun menjadi -13°C. Jika kalor jenis daging adalah 3.500 J/(kg·K), besar energi kalor yang dilepaskan daging adalah...', options: ['140.000 Joule', '280.000 Joule', '350.000 Joule', '420.000 Joule'], answer: '280.000 Joule' },
+            { id: 7, type: 'pg', question: 'Saat memasak air hingga mendidih, air panas di bagian dasar panci bergerak naik ke atas mendesak air dingin bergerak turun. Cara perpindahan kalor ini disebut...', options: ['Konduksi', 'Konveksi', 'Radiasi', 'Evaporasi'], answer: 'Konveksi' },
+            { id: 8, type: 'pg', question: 'Manakah pernyataan yang paling tepat dalam membedakan konsep suhu dan kalor?', options: ['Suhu adalah derajat panas suatu benda, sedangkan kalor adalah energi panas yang berpindah', 'Suhu merupakan salah satu bentuk energi, sedangkan kalor adalah alat ukurnya', 'Suhu diukur dalam satuan Joule, sedangkan kalor diukur dalam Celcius', 'Suhu selalu bernilai tetap, sedangkan kalor berubah-ubah'], answer: 'Suhu adalah derajat panas suatu benda, sedangkan kalor adalah energi panas yang berpindah' },
+            { id: 9, type: 'pg', question: 'Air dan minyak goreng yang bermassa sama dipanaskan dengan jumlah kalor yang sama, namun mengalami kenaikan suhu yang berbeda. Hal ini terjadi karena...', options: ['Air dan minyak goreng memiliki nilai kalor jenis yang berbeda', 'Minyak goreng memiliki massa jenis yang jauh lebih besar', 'Air tidak dapat dipanaskan melebihi suhu ruangan', 'Minyak goreng bersifat isolator sempurna'], answer: 'Air dan minyak goreng memiliki nilai kalor jenis yang berbeda' },
+            { id: 10, type: 'pg', question: 'Saat berdiri di dekat api unggun, tubuh kita terasa hangat meskipun udara di sekitar dingin. Kalor dari api unggun berpindah ke tubuh terutama melalui...', options: ['Radiasi', 'Konduksi', 'Konveksi', 'Kondensasi'], answer: 'Radiasi' },
+            { id: 11, type: 'pg', question: 'Keuntungan utama menggunakan raksa sebagai pengisi pipa kapiler pada termometer adalah...', options: ['Memuai secara teratur dan tidak membasahi dinding kaca', 'Harganya sangat murah', 'Warnanya bening sehingga gampang dibaca', 'Memiliki kalor jenis sangat tinggi'], answer: 'Memuai secara teratur dan tidak membasahi dinding kaca' },
+            { id: 12, type: 'pg', question: 'Titik acuan bawah dan titik acuan atas pada skala termometer Reamur ditentukan berdasarkan...', options: ['Es melebur (0°R) dan air mendidih (80°R) pada tekanan 1 atm', 'Es melebur (32°R) dan air mendidih (212°R)', 'Suhu mutlak (0°R) dan suhu kamar (100°R)', 'Air membeku (-10°R) dan air mendidih (100°R)'], answer: 'Es melebur (0°R) dan air mendidih (80°R) pada tekanan 1 atm' },
+            { id: 13, type: 'pg', question: 'Keping bimetal gabungan tembaga dan besi melengkung ke arah besi saat dipanaskan. Hal ini membuktikan bahwa...', options: ['Koefisien muai panjang tembaga lebih besar daripada besi', 'Koefisien muai panjang besi lebih besar daripada tembaga', 'Besi melunak lebih cepat dibanding tembaga', 'Tembaga menyusut saat dipanaskan'], answer: 'Koefisien muai panjang tembaga lebih besar daripada besi' },
+            { id: 14, type: 'pg', question: 'Komponen sekring otomatis pemutus arus listrik bekerja berdasar pada prinsip...', options: ['Pemuaian zat padat bimetal yang memiliki koefisien muai berbeda', 'Perpindahan kalor secara radiasi pada kawat sakelar', 'Perubahan wujud zat dari padat menjadi gas', 'Penurunan suhu drastis akibat arus pendek'], answer: 'Pemuaian zat padat bimetal yang memiliki koefisien muai berbeda' },
+            { id: 15, type: 'pg', question: 'Balon udara lampion dapat mengudara di angkasa karena menerapkan konsep sains yaitu...', options: ['Udara di dalam balon memuai saat dipanaskan sehingga massa jenisnya mengecil', 'Udara di dalam balon menyusut saat dipanaskan', 'Kalor mengubah udara menjadi wujud cair', 'Dorongan api secara langsung mengangkat balon'], answer: 'Udara di dalam balon memuai saat dipanaskan sehingga massa jenisnya mengecil' },
+            { id: 16, type: 'pg', question: 'Di antara bahan berikut: aluminium, plastik, kayu, dan kaca, bahan yang merupakan konduktor panas terbaik adalah...', options: ['Aluminium', 'Plastik', 'Kayu', 'Kaca'], answer: 'Aluminium' },
+            { id: 17, type: 'pg', question: 'Kabel listrik tembaga dipasang sedikit kendur pada tiang-tiang di pinggir jalan. Hal ini bertujuan agar...', options: ['Kabel tidak putus saat menyusut pada malam hari yang dingin', 'Kabel memiliki ruang muai pada siang hari', 'Menghemat penggunaan kawat tembaga', 'Memudahkan burung untuk hinggap'], answer: 'Kabel tidak putus saat menyusut pada malam hari yang dingin' },
+            { id: 18, type: 'pg', question: 'Air panas 100 gram bersuhu 80°C dicampur dengan 100 gram air dingin bersuhu 20°C tanpa ada kalor yang terbuang. Suhu akhir campuran adalah...', options: ['40°C', '50°C', '60°C', '70°C'], answer: '50°C' },
+            { id: 19, type: 'pg', question: 'Termometer X memiliki titik beku air 20°X dan titik didih air 120°X. Jika termometer Celcius menunjukkan 40°C, termometer X menunjukkan angka...', options: ['60°X', '50°X', '70°X', '80°X'], answer: '60°X' },
+            { id: 20, type: 'pg', question: 'Lantai keramik terasa lebih dingin di telapak kaki daripada alas karpet padahal suhunya sama. Hal ini disebabkan...', options: ['Keramik menghantarkan kalor dari kaki lebih cepat dibanding karpet', 'Suhu mutlak keramik lebih rendah daripada karpet', 'Karpet memancarkan radiasi panas', 'Keramik menyerap uap air'], answer: 'Keramik menghantarkan kalor dari kaki lebih cepat dibanding karpet' },
+            { id: 21, type: 'pg', question: 'Gelas kaca tebal dapat retak jika dituangi air mendidih secara tiba-tiba karena...', options: ['Bagian dalam gelas memuai cepat sedangkan bagian luar belum memuai', 'Air mendidih merusak struktur ikatan kimia kaca', 'Gelas kaca mengalami penyusutan mendadak', 'Tekanan udara di dalam gelas merusak kaca'], answer: 'Bagian dalam gelas memuai cepat sedangkan bagian luar belum memuai' },
+            { id: 22, type: 'pg', question: 'Berapakah energi kalor yang dibutuhkan untuk memanaskan 0,5 kg air dari suhu 25°C menjadi 65°C? (Kalor jenis air = 4.200 J/kg°C)', options: ['84.000 J', '42.000 J', '126.000 J', '168.000 J'], answer: '84.000 J' },
+            { id: 23, type: 'pg', question: 'Terjadinya angin laut dari laut menuju daratan pada siang hari dipicu oleh perpindahan kalor secara...', options: ['Konveksi udara', 'Konduksi tanah', 'Radiasi langsung', 'Evaporasi laut'], answer: 'Konveksi udara' },
+            { id: 24, type: 'pg', question: 'Benda A dan B bermassa sama dipanaskan dengan kompor yang sama. Ternyata suhu benda A naik lebih cepat dari benda B. Kesimpulannya...', options: ['Kalor jenis benda A lebih kecil daripada benda B', 'Kalor jenis benda A lebih besar daripada benda B', 'Benda A menyerap kalor lebih sedikit', 'Benda B konduktor yang lebih baik'], answer: 'Kalor jenis benda A lebih kecil daripada benda B' },
+            { id: 25, type: 'pg', question: 'Dinding kaca bagian dalam termos dilapisi mengkilap perak. Lapisan mengkilap ini berfungsi mencegah perpindahan kalor secara...', options: ['Radiasi', 'Konduksi', 'Konveksi', 'Evaporasi'], answer: 'Radiasi' },
+            { id: 26, type: 'pg', question: 'Tutup botol sirup berbahan logam yang macet dapat dilepas setelah disiram air panas karena...', options: ['Tutup logam memuai lebih cepat daripada mulut botol kaca', 'Mulut botol kaca menyusut', 'Air panas menghilangkan gaya gesek', 'Tutup logam menyusut mendadak'], answer: 'Tutup logam memuai lebih cepat daripada mulut botol kaca' },
+            { id: 27, type: 'pg', question: 'Perbandingan skala suhu antara Celcius, Reamur, dan (Fahrenheit - 32) yang tepat adalah...', options: ['5 : 4 : 9', '4 : 5 : 9', '9 : 5 : 4', '5 : 9 : 4'], answer: '5 : 4 : 9' },
+            { id: 28, type: 'pg', question: 'Ban sepeda tidak boleh dipompa terlalu kencang di musim panas karena...', options: ['Udara di dalam ban memuai dan dapat meletuskan ban', 'Karet ban menyusut saat terkena panas', 'Tekanan udara di dalam ban berkurang', 'Gesekan jalan meluluhkan katup ban'], answer: 'Udara di dalam ban memuai dan dapat meletuskan ban' },
+            { id: 29, type: 'pg', question: 'Pengukuran suhu tubuh dengan termometer digital berdasar pada kesetimbangan termal. Hal ini sesuai dengan...', options: ['Hukum ke-0 Termodinamika', 'Hukum Kekekalan Energi', 'Prinsip Pemuaian Zat Gas', 'Konveksi Termal'], answer: 'Hukum ke-0 Termodinamika' },
+            { id: 30, type: 'pg', question: 'Keunikan anomali air pada rentang suhu 0°C sampai 4°C adalah...', options: ['Volume air justru menyusut saat dipanaskan dari 0°C ke 4°C', 'Volume air memuai dua kali lipat', 'Air langsung menguap menjadi gas', 'Massa air berkurang drastis'], answer: 'Volume air justru menyusut saat dipanaskan dari 0°C ke 4°C' },
+
+            // --- 5 SOAL PILIHAN GANDA KOMPLEKS ---
+            { id: 31, type: 'pgk', question: 'Pilihlah DUA atau LEBIH pernyataan yang BENAR mengenai perpindahan kalor!', options: ['Konduksi terjadi tanpa disertai perpindahan partikel perantaranya', 'Konveksi terjadi disertai perpindahan fisik partikel zat', 'Radiasi memerlukan udara sebagai medium merambat', 'Sinar matahari sampai ke bumi secara radiasi melalui hampa udara'], answer: ['Konduksi terjadi tanpa disertai perpindahan partikel perantaranya', 'Konveksi terjadi disertai perpindahan fisik partikel zat', 'Sinar matahari sampai ke bumi secara radiasi melalui hampa udara'] },
+            { id: 32, type: 'pgk', question: 'Pilihlah DUA benda yang memanfaatkan sifat konduktor panas dengan baik!', options: ['Dasar panci berbahan aluminium', 'Pegangan wajan berbahan kayu/ebonit', 'Alas bawah setrika berbahan logam', 'Selimut tebal pelindung dingin'], answer: ['Dasar panci berbahan aluminium', 'Alas bawah setrika berbahan logam'] },
+            { id: 33, type: 'pgk', question: 'Manakah peristiwa yang merupakan dampak langsung dari pemuaian zat padat? (Pilih semua yang benar)', options: ['Rel kereta melengkung saat terik jika tanpa celah', 'Gelas kaca pecah saat diisi air mendidih mendadak', 'Air dalam panci meluap saat mendidih', 'Udara di dalam balon mengembang terkena panas'], answer: ['Rel kereta melengkung saat terik jika tanpa celah', 'Gelas kaca pecah saat diisi air mendidih mendadak'] },
+            { id: 34, type: 'pgk', question: 'Berdasarkan persamaan Q = m · c · ΔT, faktor apa saja yang mempengaruhi besar kalor? (Pilih jawaban benar)', options: ['Massa benda (m)', 'Kalor jenis benda (c)', 'Perubahan suhu (ΔT)', 'Warna cat wadah benda'], answer: ['Massa benda (m)', 'Kalor jenis benda (c)', 'Perubahan suhu (ΔT)'] },
+            { id: 35, type: 'pgk', question: 'Pilihlah pernyataan yang BENAR mengenai skala suhu termometer!', options: ['Kelvin menggunakan titik nol mutlak pada -273°C', 'Titik tetap atas Celcius adalah air mendidih 100°C', 'Titik tetap bawah Fahrenheit adalah 0°F', 'Suhu 0°C setara dengan 273 Kelvin'], answer: ['Kelvin menggunakan titik nol mutlak pada -273°C', 'Titik tetap atas Celcius adalah air mendidih 100°C', 'Suhu 0°C setara dengan 273 Kelvin'] },
+
+            // --- 5 SOAL DROPDOWN ---
+            { id: 36, type: 'dropdown', question: 'Bahan yang buruk atau lambat dalam menghantarkan panas dinamakan...', options: ['Konduktor', 'Isolator', 'Radiator', 'Reflektor'], answer: 'Isolator' },
+            { id: 37, type: 'dropdown', question: 'Alat yang dipakai untuk mengukur tingkat derajat panas atau suhu benda adalah...', options: ['Kalorimeter', 'Termometer', 'Barometer', 'Hygrometer'], answer: 'Termometer' },
+            { id: 38, type: 'dropdown', question: 'Peristiwa pertambahan ukuran panjang, luas, atau volume benda akibat menerima kalor adalah...', options: ['Penyusutan', 'Pemuaian', 'Kondensasi', 'Sublimasi'], answer: 'Pemuaian' },
+            { id: 39, type: 'dropdown', question: 'Satuan Standar Internasional (SI) untuk besaran suhu adalah...', options: ['Celcius', 'Fahrenheit', 'Kelvin', 'Reamur'], answer: 'Kelvin' },
+            { id: 40, type: 'dropdown', question: 'Jumlah energi panas yang diperlukan 1 kg bahan untuk menaikkan suhunya sebesar 1°C adalah...', options: ['Kalor Jenis', 'Kalor Laten', 'Kapasitas Jenis', 'Konduktivitas'], answer: 'Kalor Jenis' }
+        ];
+
+        let currentBankSoal = [...initialBankSoal];
+        let currentUser = null;
+        let adminPassword = localStorage.getItem('admin_password') || 'admin123';
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderAdminTable();
+        });
+
+        function switchLoginTab(tab) {
+            const formSiswa = document.getElementById('formSiswa');
+            const formAdmin = document.getElementById('formAdmin');
+            const tabSiswa = document.getElementById('tabSiswa');
+            const tabAdmin = document.getElementById('tabAdmin');
+
+            if (tab === 'siswa') {
+                formSiswa.classList.remove('hidden');
+                formAdmin.classList.add('hidden');
+                tabSiswa.className = "w-1/2 py-3 font-semibold text-sm text-center border-b-2 border-teal-600 text-teal-600 focus:outline-none";
+                tabAdmin.className = "w-1/2 py-3 font-semibold text-sm text-center text-gray-500 hover:text-teal-600 focus:outline-none";
+            } else {
+                formSiswa.classList.add('hidden');
+                formAdmin.classList.remove('hidden');
+                tabAdmin.className = "w-1/2 py-3 font-semibold text-sm text-center border-b-2 border-slate-800 text-slate-800 focus:outline-none";
+                tabSiswa.className = "w-1/2 py-3 font-semibold text-sm text-center text-gray-500 hover:text-teal-600 focus:outline-none";
+            }
+        }
+
+        function handleLoginSiswa(e) {
+            e.preventDefault();
+            const nama = document.getElementById('siswaNama').value.trim();
+            const kelas = document.getElementById('siswaKelas').value;
+            const presensi = document.getElementById('siswaPresensi').value;
+
+            const userKey = `exam_done_${nama.toLowerCase().replace(/\s+/g,'')}_${kelas}_${presensi}`;
+
+            if (localStorage.getItem(userKey)) {
+                alert(`Maaf ${nama} (Kelas ${kelas}, Presensi ${presensi}), Anda telah menyelesaikan kesempatan ujian ini!`);
+                return;
+            }
+
+            currentUser = { role: 'siswa', name: nama, kelas: kelas, presensi: presensi, key: userKey, isSimulasi: false };
+            startQuiz();
+        }
+
+        function handleLoginAdmin(e) {
+            e.preventDefault();
+            const user = document.getElementById('adminUser').value.trim();
+            const pass = document.getElementById('adminPass').value;
+
+            if (user === 'admin' && pass === adminPassword) {
+                currentUser = { role: 'admin', name: 'Siti Fatimah, S.Pd.', kelas: 'Guru/Admin', presensi: '0' };
+                showAdminDashboard();
+            } else {
+                alert('Username atau Password Admin salah!');
+            }
+        }
+
+        function showAdminDashboard() {
+            document.getElementById('loginSection').classList.add('hidden');
+            document.getElementById('adminSection').classList.remove('hidden');
+            document.getElementById('quizSection').classList.add('hidden');
+            document.getElementById('resultSection').classList.add('hidden');
+            updateHeader();
+        }
+
+        function updateHeader() {
+            const header = document.getElementById('userInfoHeader');
+            if (currentUser) {
+                header.classList.remove('hidden');
+                document.getElementById('headerName').innerText = currentUser.name;
+                document.getElementById('headerRole').innerText = currentUser.role === 'admin' ? 'Guru/Admin' : `Siswa (${currentUser.kelas})`;
+            } else {
+                header.classList.add('hidden');
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('loginSection').classList.remove('hidden');
+            document.getElementById('adminSection').classList.add('hidden');
+            document.getElementById('quizSection').classList.add('hidden');
+            document.getElementById('resultSection').classList.add('hidden');
+            updateHeader();
+        }
+
+        function simulasiUjianSiswa() {
+            currentUser = {
+                role: 'admin',
+                name: 'Guru Uji Coba (Simulasi)',
+                kelas: 'VII A',
+                presensi: '99',
+                isSimulasi: true
+            };
+            startQuiz();
+        }
+
+        function startQuiz() {
+            document.getElementById('loginSection').classList.add('hidden');
+            document.getElementById('adminSection').classList.add('hidden');
+            document.getElementById('quizSection').classList.remove('hidden');
+            document.getElementById('resultSection').classList.add('hidden');
+
+            updateHeader();
+            document.getElementById('quizStudentInfo').innerText = `${currentUser.name} | ${currentUser.kelas} (No. ${currentUser.presensi})`;
+
+            const container = document.getElementById('soalContainer');
+            container.innerHTML = '';
+
+            currentBankSoal.forEach((soal, idx) => {
+                const soalCard = document.createElement('div');
+                soalCard.className = 'bg-white p-6 rounded-xl shadow-md border';
+
+                let optionsHTML = '';
+
+                if (soal.type === 'pg') {
+                    optionsHTML = `<div class="space-y-2 mt-4">` +
+                        soal.options.map((opt) => `
+                            <label class="flex items-start p-3 rounded-lg border hover:bg-teal-50 transition cursor-pointer">
+                                <input type="radio" name="question_${soal.id}" value="${opt}" required class="mt-1 text-teal-600 focus:ring-teal-500">
+                                <span class="ml-3 text-sm text-gray-700">${opt}</span>
+                            </label>
+                        `).join('') + `</div>`;
+                } else if (soal.type === 'pgk') {
+                    optionsHTML = `<p class="text-xs text-amber-600 font-semibold mt-2"><i class="fa-solid fa-circle-info"></i> Pilihan Ganda Kompleks: Anda dapat memilih lebih dari satu jawaban.</p>
+                    <div class="space-y-2 mt-3">` +
+                        soal.options.map((opt) => `
+                            <label class="flex items-start p-3 rounded-lg border hover:bg-teal-50 transition cursor-pointer">
+                                <input type="checkbox" name="question_${soal.id}" value="${opt}" class="mt-1 text-teal-600 rounded focus:ring-teal-500">
+                                <span class="ml-3 text-sm text-gray-700">${opt}</span>
+                            </label>
+                        `).join('') + `</div>`;
+                } else if (soal.type === 'dropdown') {
+                    optionsHTML = `<div class="mt-4">
+                        <select name="question_${soal.id}" required class="w-full md:w-1/2 p-2.5 border rounded-lg text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none">
+                            <option value="">-- Pilih Jawaban Tepat --</option>
+                            ${soal.options.map(opt => `<option value="${opt}">${opt}</option>`).join('')}
+                        </select>
+                    </div>`;
+                }
+
+                soalCard.innerHTML = `
+                    <div class="flex items-start justify-between">
+                        <span class="bg-teal-100 text-teal-800 text-xs font-bold px-2.5 py-1 rounded-md">Soal No. ${idx + 1}</span>
+                        <span class="text-xs text-gray-400 capitalize">${soal.type === 'pg' ? 'Pilihan Ganda' : (soal.type === 'pgk' ? 'PG Kompleks' : 'Dropdown')}</span>
+                    </div>
+                    <p class="mt-3 text-gray-800 font-medium text-base leading-relaxed">${soal.question}</p>
+                    ${optionsHTML}
+                `;
+
+                container.appendChild(soalCard);
+            });
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function submitQuiz(e) {
+            e.preventDefault();
+
+            let totalCorrect = 0;
+            const form = document.getElementById('quizForm');
+
+            currentBankSoal.forEach(soal => {
+                if (soal.type === 'pg' || soal.type === 'dropdown') {
+                    const selected = form[`question_${soal.id}`]?.value;
+                    if (selected === soal.answer) {
+                        totalCorrect++;
+                    }
+                } else if (soal.type === 'pgk') {
+                    const checkboxes = form.querySelectorAll(`input[name="question_${soal.id}"]:checked`);
+                    const selectedArr = Array.from(checkboxes).map(cb => cb.value);
+                    
+                    const isCorrect = selectedArr.length === soal.answer.length &&
+                        selectedArr.every(val => soal.answer.includes(val));
+                    
+                    if (isCorrect) {
+                        totalCorrect++;
+                    }
+                }
+            });
+
+            const finalScore = Math.round((totalCorrect / currentBankSoal.length) * 100);
+
+            if (currentUser.role === 'siswa' && currentUser.key) {
+                localStorage.setItem(currentUser.key, 'DONE');
+            }
+
+            showResults(finalScore);
+        }
+
+        function showResults(score) {
+            document.getElementById('quizSection').classList.add('hidden');
+            document.getElementById('resultSection').classList.remove('hidden');
+
+            document.getElementById('resNama').innerText = currentUser.name;
+            document.getElementById('resKelas').innerText = currentUser.kelas;
+            document.getElementById('resPresensi').innerText = currentUser.presensi;
+            document.getElementById('resSkor').innerText = score;
+
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+            document.getElementById('resTanggal').innerText = dateStr;
+            document.getElementById('printDate').innerText = dateStr;
+
+            const btnAdmin = document.getElementById('btnKembaliAdmin');
+            if (currentUser.role === 'admin' || currentUser.isSimulasi) {
+                btnAdmin.classList.remove('hidden');
+            } else {
+                btnAdmin.classList.add('hidden');
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function backToAdmin() {
+            currentUser = { role: 'admin', name: 'Siti Fatimah, S.Pd.', kelas: 'Guru/Admin', presensi: '0' };
+            showAdminDashboard();
+        }
+
+        function renderAdminTable() {
+            const tbody = document.getElementById('adminSoalTable');
+            document.getElementById('totalSoalCount').innerText = currentBankSoal.length;
+            tbody.innerHTML = '';
+
+            currentBankSoal.forEach((soal, index) => {
+                const tr = document.createElement('tr');
+                tr.className = index % 2 === 0 ? 'bg-white' : 'bg-gray-50';
+
+                let keyAnswerText = Array.isArray(soal.answer) ? soal.answer.join('; ') : soal.answer;
+
+                tr.innerHTML = `
+                    <td class="p-3 border font-semibold">${index + 1}</td>
+                    <td class="p-3 border text-gray-800">${soal.question}</td>
+                    <td class="p-3 border text-xs uppercase font-bold text-teal-700">${soal.type}</td>
+                    <td class="p-3 border text-xs text-gray-600">${keyAnswerText}</td>
+                    <td class="p-3 border text-center space-x-1">
+                        <button onclick="openEditSoalModal(${index})" class="bg-blue-600 text-white px-2.5 py-1 rounded text-xs hover:bg-blue-700">
+                            <i class="fa-solid fa-pen"></i> Edit
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openChangePassModal() {
+            document.getElementById('changePassModal').classList.remove('hidden');
+        }
+
+        function closeChangePassModal() {
+            document.getElementById('changePassModal').classList.add('hidden');
+        }
+
+        function saveAdminPassword(e) {
+            e.preventDefault();
+            const newPass = document.getElementById('newAdminPass').value;
+            if (newPass) {
+                adminPassword = newPass;
+                localStorage.setItem('admin_password', newPass);
+                alert('Password Admin berhasil diperbarui!');
+                closeChangePassModal();
+            }
+        }
+
+        function openEditSoalModal(index) {
+            const soal = currentBankSoal[index];
+            document.getElementById('editSoalIndex').value = index;
+            document.getElementById('editSoalNo').innerText = index + 1;
+            document.getElementById('editSoalTeks').value = soal.question;
+
+            const optContainer = document.getElementById('editOptionsContainer');
+            optContainer.innerHTML = '';
+
+            if (soal.type === 'pg' || soal.type === 'dropdown') {
+                optContainer.innerHTML = `<label class="block text-sm font-semibold mb-1">Opsi Jawaban (Pilih Radio untuk Kunci)</label>`;
+                soal.options.forEach((opt, oIdx) => {
+                    optContainer.innerHTML += `
+                        <div class="flex items-center space-x-2 mb-2">
+                            <input type="radio" name="editKeyRadio" value="${oIdx}" ${opt === soal.answer ? 'checked' : ''}>
+                            <input type="text" class="optInput w-full p-2 border rounded text-sm" value="${opt}">
+                        </div>
+                    `;
+                });
+            } else if (soal.type === 'pgk') {
+                optContainer.innerHTML = `<label class="block text-sm font-semibold mb-1">Opsi Jawaban (Centang Checkbox untuk Kunci)</label>`;
+                soal.options.forEach((opt) => {
+                    const isChecked = soal.answer.includes(opt);
+                    optContainer.innerHTML += `
+                        <div class="flex items-center space-x-2 mb-2">
+                            <input type="checkbox" class="optCheck" ${isChecked ? 'checked' : ''}>
+                            <input type="text" class="optInput w-full p-2 border rounded text-sm" value="${opt}">
+                        </div>
+                    `;
+                });
+            }
+
+            document.getElementById('editSoalModal').classList.remove('hidden');
+        }
+
+        function closeEditSoalModal() {
+            document.getElementById('editSoalModal').classList.add('hidden');
+        }
+
+        function saveEditedSoal(e) {
+            e.preventDefault();
+            const idx = parseInt(document.getElementById('editSoalIndex').value);
+            const soal = currentBankSoal[idx];
+            soal.question = document.getElementById('editSoalTeks').value;
+
+            const optInputs = document.querySelectorAll('.optInput');
+            const newOptions = Array.from(optInputs).map(inp => inp.value);
+
+            soal.options = newOptions;
+
+            if (soal.type === 'pg' || soal.type === 'dropdown') {
+                const radios = document.getElementsByName('editKeyRadio');
+                let selectedIndex = 0;
+                radios.forEach((r, i) => { if (r.checked) selectedIndex = i; });
+                soal.answer = newOptions[selectedIndex];
+            } else if (soal.type === 'pgk') {
+                const checks = document.querySelectorAll('.optCheck');
+                const newAnswer = [];
+                checks.forEach((chk, i) => {
+                    if (chk.checked) newAnswer.push(newOptions[i]);
+                });
+                soal.answer = newAnswer;
+            }
+
+            renderAdminTable();
+            closeEditSoalModal();
+            alert('Soal berhasil diperbarui!');
+        }
+
+        function resetDataUjianSiswa() {
+            if (confirm('Reset seluruh riwayat pengerjaan siswa agar siswa bisa mengerjakan ulang?')) {
+                Object.keys(localStorage).forEach(key => {
+                    if (key.startsWith('exam_done_')) {
+                        localStorage.removeItem(key);
+                    }
+                });
+                alert('Akses pengerjaan siswa berhasil di-reset!');
+            }
+        }
+    </script>
+</body>
+</html>
+```eof
